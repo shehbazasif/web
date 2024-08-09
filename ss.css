@@ -1,0 +1,19 @@
+p{
+
+}
+h1{
+    
+}
+div{
+    border-radius: 5px;
+    /* border: 2px solid black; */
+    width: 50%;
+    height: 50%;
+    background-color: aquamarine;
+}
+div.c1{
+    background-color: rgb(80, 63, 42);
+    color: antiquewhite;
+}
+section.c1{
+ background-color: aqua;}
