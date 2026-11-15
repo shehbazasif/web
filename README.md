@@ -21,5 +21,5 @@ npm run generate   # static build in .output/public
 ## Deploy to Netlify
 
 1. In Netlify, choose **Add new site → Import an existing project** and pick this repository.
-2. The settings come from `netlify.toml` (build command `npm run generate`, publish directory `.output/public`).
+2. The settings come from `netlify.toml` (build command `npm run generate`, publish directory `dist`).
 3. The contact form uses **Netlify Forms**. Submissions show up under *Forms* in the Netlify dashboard once the site is deployed.
