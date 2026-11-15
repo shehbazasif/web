@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { profile, projects, process, skills, experience } from '~/data/site'
+const NuxtLink = resolveComponent('NuxtLink')
 </script>
 
 <template>
@@ -56,24 +57,29 @@ import { profile, projects, process, skills, experience } from '~/data/site'
       <div class="mx-auto max-w-6xl px-4 py-24 sm:px-8">
         <div class="mb-14 flex flex-wrap items-end justify-between gap-4">
           <h2 class="text-[clamp(2.25rem,5vw,3.75rem)]"><span class="display-wide">Selected</span> <span class="display-narrow text-muted">work</span></h2>
-          <p class="max-w-xs text-sm text-muted">Five projects from the last three years. Hover a frame to select it.</p>
+          <p class="max-w-xs text-sm text-muted">Five projects from the last three years. Try the booking demo in the first one.</p>
         </div>
 
         <ul class="grid gap-x-8 gap-y-16 md:grid-cols-2">
           <li v-for="(p, i) in projects" :key="p.slug" :class="i === 0 ? 'md:col-span-2' : ''">
-            <NuxtLink :to="`/work/${p.slug}`" class="group block focus:outline-none">
+            <!-- The interactive card can't be one big link, or every click in the demo would navigate. -->
+            <component :is="p.mock === 'booking' ? 'div' : NuxtLink" v-bind="p.mock === 'booking' ? {} : { to: `/work/${p.slug}` }" class="group block focus:outline-none">
               <p class="mb-2.5 flex items-center gap-1.5 font-mono text-[11px] text-muted transition-colors group-hover:text-select group-focus-visible:text-select">
                 <svg viewBox="0 0 12 12" class="size-3" aria-hidden="true"><path d="M3 0v12M9 0v12M0 3h12M0 9h12" stroke="currentColor" fill="none" /></svg>
                 {{ p.client }} / {{ p.platform }}
                 <span v-if="p.status" class="ml-1.5 rounded-full bg-redline/10 px-2 py-0.5 text-redline">{{ p.status }}</span>
               </p>
               <SelectionFrame :always="false">
-                <div class="spec-outline bg-sheet" :class="i === 0 ? 'aspect-[4/3] md:aspect-[21/9]' : 'aspect-[4/3]'"><div class="h-full ring-1 ring-line transition-colors group-hover:bg-white">
+                <div class="spec-outline flex flex-col bg-sheet" :class="p.mock === 'booking' ? 'md:min-h-[440px]' : 'aspect-[4/3]'"><div class="flex-1 ring-1 ring-line transition-colors group-hover:bg-white">
                   <ProjectMock :kind="p.mock" />
                 </div></div>
               </SelectionFrame>
               <div class="mt-7 grid gap-3">
-                <h3 class="text-xl font-semibold leading-snug tracking-tight group-hover:underline group-hover:decoration-select group-hover:decoration-2 group-hover:underline-offset-4">{{ p.title }}</h3>
+                <h3 v-if="p.mock === 'booking'" class="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2 text-xl font-semibold leading-snug tracking-tight">
+                  <NuxtLink :to="`/work/${p.slug}`" class="hover:underline hover:decoration-select hover:decoration-2 hover:underline-offset-4">{{ p.title }}</NuxtLink>
+                  <NuxtLink :to="`/work/${p.slug}`" class="text-sm font-medium text-select hover:underline">Read the case study →</NuxtLink>
+                </h3>
+                <h3 v-else class="text-xl font-semibold leading-snug tracking-tight group-hover:underline group-hover:decoration-select group-hover:decoration-2 group-hover:underline-offset-4">{{ p.title }}</h3>
                 <p class="text-muted">{{ p.summary }}</p>
                 <dl class="mt-2 flex flex-wrap gap-x-8 gap-y-2 border-t border-line pt-4">
                   <div v-for="o in p.outcome" :key="o.label">
@@ -82,7 +88,7 @@ import { profile, projects, process, skills, experience } from '~/data/site'
                   </div>
                 </dl>
               </div>
-            </NuxtLink>
+            </component>
           </li>
         </ul>
       </div>

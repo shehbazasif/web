@@ -5,28 +5,8 @@ defineProps<{ kind: Mock }>()
 
 <template>
   <div class="relative h-full w-full overflow-hidden" aria-hidden="true">
-    <!-- Booking: public booking page -->
-    <div v-if="kind === 'booking'" class="flex h-full items-center justify-center gap-5 p-6">
-      <div class="w-full max-w-[250px] rounded-xl bg-white p-4 shadow-[0_12px_40px_-12px_rgb(27_26_46/0.25)]">
-        <p class="font-mono text-[10px] text-muted">Maria Beauty Studio · Athens</p>
-        <p class="mt-1 text-sm font-semibold">Choose a service</p>
-        <ul class="mt-3 space-y-1.5 text-[12px]">
-          <li v-for="(s, i) in [['Haircut & styling','45 min','€35'],['Manicure','30 min','€20'],['Hair colour','90 min','€70']]" :key="s[0]"
-            class="flex items-center justify-between rounded-lg px-2.5 py-2" :class="i === 0 ? 'bg-select/10 ring-1 ring-select' : 'bg-paper/60'">
-            <span><span class="font-medium">{{ s[0] }}</span><span class="block font-mono text-[9px] text-muted">{{ s[1] }}</span></span><span class="font-medium">{{ s[2] }}</span>
-          </li>
-        </ul>
-      </div>
-      <div class="hidden w-full max-w-[250px] rounded-xl bg-white p-4 shadow-[0_12px_40px_-12px_rgb(27_26_46/0.25)] sm:block">
-        <p class="text-sm font-semibold">Thursday, 14 May</p>
-        <p class="mt-0.5 text-[11px] text-muted">Any available · 45 min</p>
-        <div class="mt-3 grid grid-cols-3 gap-1.5 font-mono text-[11px]">
-          <span v-for="(t, i) in ['10:00','10:45','11:30','12:15','14:00','14:45','15:30','16:15','17:00']" :key="t"
-            class="rounded-md py-1.5 text-center" :class="i === 4 ? 'bg-select text-white' : [2, 6].includes(i) ? 'bg-paper/60 text-muted line-through' : 'ring-1 ring-line'">{{ t }}</span>
-        </div>
-        <div class="mt-4 rounded-lg bg-ink py-2 text-center text-[12px] font-medium text-white">Book 14:00</div>
-      </div>
-    </div>
+    <!-- Booking: live, clickable demo -->
+    <BookingDemo v-if="kind === 'booking'" />
 
     <!-- Onboarding: checklist + progress -->
     <div v-else-if="kind === 'onboarding'" class="flex h-full items-center justify-center p-6">
