@@ -18,7 +18,7 @@ export const profile = {
   ],
 }
 
-export type Mock = 'onboarding' | 'calendar' | 'system' | 'mobile'
+export type Mock = 'booking' | 'onboarding' | 'calendar' | 'system' | 'mobile'
 
 export interface Project {
   slug: string
@@ -27,6 +27,7 @@ export interface Project {
   year: string
   role: string
   platform: string
+  status?: string
   summary: string
   mock: Mock
   outcome: { value: string; label: string }[]
@@ -36,6 +37,29 @@ export interface Project {
 }
 
 export const projects: Project[] = [
+  {
+    slug: 'rantevouos',
+    title: 'An appointment system built for Greek salons',
+    client: 'RantevouOS',
+    year: '2026',
+    role: 'Product designer & builder',
+    platform: 'Web app · Nuxt',
+    status: 'In progress',
+    summary: 'Booking page, team calendar and customer list for salons, barbers and spas, designed and built end to end.',
+    mock: 'booking',
+    outcome: [
+      { value: '0', label: 'accounts needed to book' },
+      { value: '5', label: 'languages, Greek first' },
+    ],
+    problem:
+      'Most small salons in Greece still take bookings by phone and keep them in a paper diary. Existing tools were built for bigger chains and felt like too much for a studio with five chairs.',
+    approach: [
+      { title: 'Booking without an account', body: 'Customers pick a service, a staff member or "Any available", then a time. They only type a name, phone and email. The slot is checked again before it saves, so two people can never book the same chair.' },
+      { title: 'One calendar for the whole team', body: 'Appointments, staff, services, working hours and customers live in one dashboard. Each appointment moves through clear states: confirmed, checked in, completed or no-show.' },
+      { title: 'Small things for the front desk', body: 'A printable QR code for the booking link, QR badges staff scan to check in, and customer import from an existing spreadsheet so nobody starts from zero.' },
+    ],
+    learned: 'Designing the booking page first, before the dashboard, kept every screen tied to an appointment a real customer makes.',
+  },
   {
     slug: 'ledgerly-onboarding',
     title: 'Opening a business account in one sitting',

@@ -6,7 +6,7 @@ The page looks like a design file. The hero headline sits inside a selection box
 
 ## Edit your content
 
-All copy lives in [`app/data/site.ts`](app/data/site.ts): name, email, links, case studies, process, skills and experience. The case studies are sample content — replace them with your own projects.
+All copy lives in [`app/data/site.ts`](app/data/site.ts): name, email, links, case studies, process, skills and experience. RantevouOS is a real project; the other four case studies are sample content to replace with your own work.
 
 Design tokens (colors and fonts) are in [`app/assets/css/main.css`](app/assets/css/main.css).
 

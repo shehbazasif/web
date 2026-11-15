@@ -25,7 +25,7 @@ useSeoMeta({ title: `${p.client}: ${p.title} — ${profile.name}`, description: 
 
     <div class="mx-auto max-w-6xl px-4 sm:px-8">
       <SelectionFrame :label="`${p.client} / Final`">
-        <div class="aspect-[16/9] min-h-[320px] bg-sheet ring-1 ring-line"><ProjectMock :kind="p.mock" /></div>
+        <div class="h-[340px] w-full bg-sheet ring-1 ring-line sm:h-auto sm:aspect-[16/9]"><ProjectMock :kind="p.mock" /></div>
       </SelectionFrame>
     </div>
 
