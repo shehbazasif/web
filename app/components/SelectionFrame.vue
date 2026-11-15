@@ -25,7 +25,7 @@ const handles = ['-left-[5px] -top-[5px]', 'left-1/2 -translate-x-1/2 -top-[5px]
       :class="props.always ? 'outline' : 'opacity-0 outline group-hover/sel:opacity-100 group-focus-within/sel:opacity-100'"
       aria-hidden="true"
     >
-      <span v-for="(h, i) in handles" :key="i" class="sel-h" :class="h" />
+      <span v-for="(h, i) in handles" :key="i" :data-h="i" class="sel-h" :class="h" />
       <span
         v-if="size.w"
         class="absolute left-1/2 top-full mt-2.5 -translate-x-1/2 rounded-[3px] bg-select px-1.5 py-1 font-mono text-[10px] leading-none whitespace-nowrap text-white"

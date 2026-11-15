@@ -1,12 +1,16 @@
 <script setup lang="ts">
 import { profile, projects, process, skills, experience } from '~/data/site'
+// @ts-ignore plain JS module shared with the static preview
+import { heroResize } from '~/lib/hero-resize.js'
+const heroRoot = ref<HTMLElement | null>(null)
+onMounted(() => heroResize(heroRoot.value))
 </script>
 
 <template>
   <div>
     <!-- HERO: the headline is a selected layer on a canvas -->
     <section class="canvas-dots relative overflow-hidden">
-      <div class="mx-auto max-w-6xl px-4 pb-24 pt-16 sm:px-8 md:pb-32 md:pt-24">
+      <div data-hero-bounds class="mx-auto max-w-6xl px-4 pb-24 pt-16 sm:px-8 md:pb-32 md:pt-24">
         <div class="flex flex-wrap items-center gap-x-4 gap-y-2">
           <p class="eyebrow">{{ profile.role }} · {{ profile.location }}</p>
           <p class="flex items-center gap-2 rounded-full bg-sheet px-2.5 py-1 text-xs text-muted ring-1 ring-line">
@@ -15,9 +19,9 @@ import { profile, projects, process, skills, experience } from '~/data/site'
           </p>
         </div>
 
-        <div class="relative mt-12 inline-block md:mt-16">
-          <SelectionFrame label="Headline" class="hero-in">
-            <h1 class="px-3 py-2 text-[clamp(2.75rem,11vw,8.5rem)] sm:px-5 sm:py-3">
+        <div ref="heroRoot" class="relative mt-12 inline-block md:mt-16">
+          <SelectionFrame label="Headline" class="hero-in" data-hero-frame>
+            <h1 class="hero-h1 px-3 py-2 sm:px-5 sm:py-3">
               <span class="hero-word display-wide block">Interfaces</span>
               <span class="hero-word display-narrow block pb-[0.06em] text-muted">that get out</span>
               <span class="hero-word display-wide block whitespace-nowrap">of the way.</span>
@@ -25,8 +29,8 @@ import { profile, projects, process, skills, experience } from '~/data/site'
           </SelectionFrame>
 
           <!-- cursor + name tag, like a collaborator in the file -->
-          <div class="cursor-in pointer-events-none absolute -bottom-12 right-[8%] flex items-start sm:-bottom-10" aria-hidden="true">
-            <svg width="18" height="20" viewBox="0 0 18 20" class="drop-shadow-sm"><path d="M1 1l15 7.5-6.5 1.8L6.7 18z" fill="#E5337A" stroke="#fff" stroke-width="1.5" stroke-linejoin="round" /></svg>
+          <div data-hero-cursor class="pointer-events-none absolute -bottom-12 right-[8%] z-10 flex items-start sm:-bottom-10" aria-hidden="true">
+            <svg width="18" height="20" viewBox="0 0 18 20" class="origin-top-left drop-shadow-sm"><path d="M1 1l15 7.5-6.5 1.8L6.7 18z" fill="#E5337A" stroke="#fff" stroke-width="1.5" stroke-linejoin="round" /></svg>
             <span class="ml-0.5 mt-4 rounded-md rounded-tl-none bg-redline px-2 py-1 text-xs font-medium text-white">{{ profile.first }}</span>
           </div>
 
@@ -150,17 +154,16 @@ import { profile, projects, process, skills, experience } from '~/data/site'
 </template>
 
 <style scoped>
+.hero-h1 { font-size: calc(clamp(2.75rem, 11vw, 8.5rem) * var(--k, 1)); }
 .hero-word { transition: color .3s ease; }
 .hero-word:hover { color: var(--color-select); }
 
 @media (prefers-reduced-motion: no-preference) {
-  .hero-in { animation: frame-in .9s cubic-bezier(.2,.8,.2,1) both; }
+  .hero-in { animation: frame-in .9s cubic-bezier(.2,.8,.2,1) backwards; }
   .hero-in .hero-word { animation: word-in .9s cubic-bezier(.2,.8,.2,1) both; }
   .hero-in .hero-word:nth-child(2) { animation-delay: .08s; }
   .hero-in .hero-word:nth-child(3) { animation-delay: .16s; }
-  .cursor-in { animation: cursor-in 1.4s cubic-bezier(.2,.8,.2,1) .5s both; }
 }
-@keyframes frame-in { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 -20% -40% -20%); } }
+@keyframes frame-in { from { clip-path: inset(-12px 100% -40px -12px); } to { clip-path: inset(-12px -20% -40px -12px); } }
 @keyframes word-in { from { transform: translateY(.35em); opacity: 0; } }
-@keyframes cursor-in { from { transform: translate(-260px, -120px); opacity: 0; } 40% { opacity: 1; } }
 </style>

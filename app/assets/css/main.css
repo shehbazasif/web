@@ -9,9 +9,9 @@
   --color-redline: #E5337A;
   --color-select: #3D6BFF;
 
-  --font-display: "Sora", ui-sans-serif, system-ui, sans-serif;
-  --font-sans: "Geist", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, monospace;
+  --font-display: "Sora Variable", "Sora", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Geist Variable", "Geist", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Geist Mono Variable", "Geist Mono", ui-monospace, SFMono-Regular, monospace;
 }
 
 @layer base {
