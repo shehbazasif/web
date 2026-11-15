@@ -9,7 +9,7 @@
   --color-redline: #E5337A;
   --color-select: #3D6BFF;
 
-  --font-display: "Anybody", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Sora", ui-sans-serif, system-ui, sans-serif;
   --font-sans: "Geist", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, monospace;
 }
@@ -29,9 +29,9 @@
 }
 
 @layer components {
-  /* Display type: Anybody's width axis is the personality. Wide = statement, narrow = annotation. */
-  .display-wide { font-family: var(--font-display); font-variation-settings: "wdth" 130; font-weight: 800; letter-spacing: -0.035em; line-height: .92; }
-  .display-narrow { font-family: var(--font-display); font-variation-settings: "wdth" 62; font-weight: 300; letter-spacing: -0.01em; line-height: .92; }
+  /* Display type: Sora. Bold = statement, light = the quieter second voice. */
+  .display-wide { font-family: var(--font-display); font-weight: 700; letter-spacing: -0.045em; line-height: .98; }
+  .display-narrow { font-family: var(--font-display); font-weight: 300; letter-spacing: -0.045em; line-height: .98; }
   .eyebrow { @apply font-mono text-[11px] uppercase tracking-[0.14em] text-muted; }
 
   .canvas-dots {

@@ -17,7 +17,7 @@ import { profile, projects, process, skills, experience } from '~/data/site'
 
         <div class="relative mt-12 inline-block md:mt-16">
           <SelectionFrame label="Headline" class="hero-in">
-            <h1 class="px-3 py-2 text-[clamp(2.6rem,10.4vw,7.75rem)] sm:px-5 sm:py-3">
+            <h1 class="px-3 py-2 text-[clamp(2.75rem,11vw,8.5rem)] sm:px-5 sm:py-3">
               <span class="hero-word display-wide block">Interfaces</span>
               <span class="hero-word display-narrow block pb-[0.06em] text-muted">that get out</span>
               <span class="hero-word display-wide block whitespace-nowrap">of the way.</span>
@@ -32,9 +32,9 @@ import { profile, projects, process, skills, experience } from '~/data/site'
 
           <div class="spec absolute left-0 top-full mt-4" aria-hidden="true">
             <div class="flex flex-wrap gap-1">
-              <span class="spec-tag">Anybody 800 · wdth 130</span>
-              <span class="spec-tag">Anybody 300 · wdth 62</span>
-              <span class="spec-tag">line-height 0.92</span>
+              <span class="spec-tag">Sora 700 · −4.5%</span>
+              <span class="spec-tag">Sora 300 · −4.5%</span>
+              <span class="spec-tag">line-height 0.98</span>
             </div>
           </div>
         </div>
@@ -77,7 +77,7 @@ import { profile, projects, process, skills, experience } from '~/data/site'
                 <dl class="mt-2 flex flex-wrap gap-x-8 gap-y-2 border-t border-line pt-4">
                   <div v-for="o in p.outcome" :key="o.label">
                     <dt class="sr-only">{{ o.label }}</dt>
-                    <dd><span class="font-display text-lg font-bold [font-variation-settings:'wdth'_110]">{{ o.value }}</span> <span class="text-sm text-muted">{{ o.label }}</span></dd>
+                    <dd><span class="font-display text-lg font-semibold tracking-tight">{{ o.value }}</span> <span class="text-sm text-muted">{{ o.label }}</span></dd>
                   </div>
                 </dl>
               </div>
@@ -100,7 +100,7 @@ import { profile, projects, process, skills, experience } from '~/data/site'
           <ol class="grid gap-px overflow-hidden rounded-xl bg-line ring-1 ring-line sm:grid-cols-2 lg:grid-cols-3">
             <li v-for="(s, i) in process" :key="s.step" class="group bg-sheet p-6 transition-colors hover:bg-white">
               <span class="font-mono text-xs text-select">{{ String(i + 1).padStart(2, '0') }}</span>
-              <h3 class="mt-6 font-display text-2xl font-bold [font-variation-settings:'wdth'_115] transition-[font-variation-settings] duration-500 group-hover:[font-variation-settings:'wdth'_140]">{{ s.step }}</h3>
+              <h3 class="mt-6 font-display text-2xl font-semibold tracking-[-0.03em] transition-colors group-hover:text-select">{{ s.step }}</h3>
               <p class="mt-2 text-sm leading-relaxed text-muted">{{ s.body }}</p>
             </li>
           </ol>
@@ -145,9 +145,8 @@ import { profile, projects, process, skills, experience } from '~/data/site'
 </template>
 
 <style scoped>
-.hero-word { transition: font-variation-settings .6s cubic-bezier(.2,.8,.2,1); }
-.hero-word.display-wide:hover { font-variation-settings: "wdth" 150; }
-.hero-word.display-narrow:hover { font-variation-settings: "wdth" 90; }
+.hero-word { transition: color .3s ease; }
+.hero-word:hover { color: var(--color-select); }
 
 @media (prefers-reduced-motion: no-preference) {
   .hero-in { animation: frame-in .9s cubic-bezier(.2,.8,.2,1) both; }
@@ -157,6 +156,6 @@ import { profile, projects, process, skills, experience } from '~/data/site'
   .cursor-in { animation: cursor-in 1.4s cubic-bezier(.2,.8,.2,1) .5s both; }
 }
 @keyframes frame-in { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 -20% -40% -20%); } }
-@keyframes word-in { from { font-variation-settings: "wdth" 50; opacity: 0; } }
+@keyframes word-in { from { transform: translateY(.35em); opacity: 0; } }
 @keyframes cursor-in { from { transform: translate(-260px, -120px); opacity: 0; } 40% { opacity: 1; } }
 </style>

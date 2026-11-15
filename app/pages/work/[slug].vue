@@ -14,7 +14,7 @@ useSeoMeta({ title: `${p.client}: ${p.title} — ${profile.name}`, description: 
       <div class="mx-auto max-w-6xl px-4 pb-16 pt-12 sm:px-8 md:pt-16">
         <NuxtLink to="/#work" class="font-mono text-xs text-muted hover:text-ink">← All work</NuxtLink>
         <p class="eyebrow mt-10">{{ p.client }} · {{ p.year }}</p>
-        <h1 class="mt-4 max-w-4xl font-display text-[clamp(2.25rem,6vw,4.75rem)] font-extrabold leading-[0.98] tracking-[-0.03em] [font-variation-settings:'wdth'_115]">{{ p.title }}</h1>
+        <h1 class="mt-4 max-w-4xl font-display text-[clamp(2.25rem,6vw,4.75rem)] font-bold leading-[1.02] tracking-[-0.04em] text-balance">{{ p.title }}</h1>
         <dl class="mt-10 grid max-w-3xl grid-cols-2 gap-6 border-t border-line pt-6 text-sm sm:grid-cols-4">
           <div><dt class="eyebrow">Role</dt><dd class="mt-1.5">{{ p.role }}</dd></div>
           <div><dt class="eyebrow">Platform</dt><dd class="mt-1.5">{{ p.platform }}</dd></div>
@@ -45,7 +45,7 @@ useSeoMeta({ title: `${p.client}: ${p.title} — ${profile.name}`, description: 
       </ol>
 
       <h2 class="eyebrow">What I learned</h2>
-      <blockquote class="border-l-2 border-redline pl-6 font-display text-2xl font-light leading-snug [font-variation-settings:'wdth'_80] md:text-3xl">{{ p.learned }}</blockquote>
+      <blockquote class="border-l-2 border-redline pl-6 font-display text-2xl font-light leading-snug tracking-[-0.02em] md:text-3xl">{{ p.learned }}</blockquote>
     </div>
 
     <NuxtLink :to="`/work/${next.slug}`" class="group block border-t border-line">

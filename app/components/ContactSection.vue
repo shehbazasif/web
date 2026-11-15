@@ -31,9 +31,13 @@ async function submit(e: Event) {
           <span class="display-narrow block text-paper/70">messy flow?</span>
         </h2>
         <p class="mt-6 max-w-sm text-paper/70">{{ profile.available }}. I reply within two working days.</p>
-        <a :href="`mailto:${profile.email}`" class="mt-8 inline-flex items-center gap-2 border-b border-select pb-1 text-lg font-medium text-white hover:text-select">
+        <a :href="`mailto:${profile.email}`" class="mt-8 inline-flex items-center gap-2 break-all border-b border-select pb-1 text-lg font-medium text-white hover:text-select">
           {{ profile.email }} <span aria-hidden="true">↗</span>
         </a>
+        <p class="mt-4">
+          <a :href="profile.phoneHref" class="font-mono text-sm text-paper/70 hover:text-white">{{ profile.phone }}</a>
+          <span class="ml-2 text-sm text-paper/40">· {{ profile.location }}</span>
+        </p>
       </div>
 
       <form name="contact" method="POST" data-netlify="true" netlify-honeypot="company" class="space-y-5" @submit.prevent="submit">

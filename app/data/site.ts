@@ -3,8 +3,10 @@ export const profile = {
   name: 'Shehbaz Asif',
   first: 'Shehbaz',
   role: 'UI/UX Designer',
-  location: 'Lahore, Pakistan · working remotely',
-  email: 'hello@shehbazasif.com',
+  location: 'Doha, Qatar',
+  email: 'muhammadshehbazasif@gmail.com',
+  phone: '+974 5123 8500',
+  phoneHref: 'tel:+97451238500',
   available: 'Open to product design roles and freelance projects from January',
   intro:
     'I research, design and test product interfaces for web and mobile, from the first interview to the handoff file developers actually enjoy opening.',
