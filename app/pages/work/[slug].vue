@@ -24,7 +24,7 @@ useSeoMeta({ title: `${p.client}: ${p.title} — ${profile.name}`, description: 
     </header>
 
     <div class="mx-auto max-w-6xl px-4 sm:px-8">
-      <p v-if="p.mock === 'booking'" class="mb-8 text-sm text-muted">This is clickable. Pick a service, a day and a time, then book.</p>
+      <p v-if="p.mock === 'booking'" class="mb-8 text-sm text-muted">Watch a customer book an appointment from start to finish.</p>
       <SelectionFrame :label="`${p.client} / Final`">
         <div class="w-full bg-sheet ring-1 ring-line" :class="p.mock === 'booking' ? 'md:min-h-[480px]' : 'h-[340px] sm:h-auto sm:aspect-[16/9]'"><ProjectMock :kind="p.mock" /></div>
       </SelectionFrame>

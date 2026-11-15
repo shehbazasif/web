@@ -57,7 +57,7 @@ const NuxtLink = resolveComponent('NuxtLink')
       <div class="mx-auto max-w-6xl px-4 py-24 sm:px-8">
         <div class="mb-14 flex flex-wrap items-end justify-between gap-4">
           <h2 class="text-[clamp(2.25rem,5vw,3.75rem)]"><span class="display-wide">Selected</span> <span class="display-narrow text-muted">work</span></h2>
-          <p class="max-w-xs text-sm text-muted">Five projects from the last three years. Try the booking demo in the first one.</p>
+          <p class="max-w-xs text-sm text-muted">Five projects from the last three years. The first one shows a real booking flow in motion.</p>
         </div>
 
         <ul class="grid gap-x-8 gap-y-16 md:grid-cols-2">

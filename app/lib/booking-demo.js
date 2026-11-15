@@ -119,33 +119,121 @@ export function renderBooking(s) {
   return `<div class="flex flex-col items-center justify-center gap-4 sm:flex-row sm:items-start">${left}${right}</div>`
 }
 
+// Draws the demo into el's [data-stage] and returns a small API to drive it.
 export function mountBooking(el) {
-  if (!el || el.dataset.mounted) return
-  el.dataset.mounted = '1'
+  if (!el || el.__booking) return el && el.__booking
+  const stage = el.querySelector('[data-stage]') || el
   const s = initialState()
   const keepSlot = () => {
-    const ok = slots(s).some((x) => x.t === s.slot && !x.taken)
-    if (!ok) s.slot = null
+    if (!slots(s).some((x) => x.t === s.slot && !x.taken)) s.slot = null
   }
-  const draw = (focusSel) => {
-    el.innerHTML = renderBooking(s)
-    if (focusSel) { const f = el.querySelector(focusSel); if (f) f.focus() }
-  }
-  el.addEventListener('input', (e) => { if (e.target.dataset.field === 'name') s.name = e.target.value })
-  el.addEventListener('click', (e) => {
-    const b = e.target.closest('[data-act]')
-    if (!b || !el.contains(b)) return
-    e.preventDefault(); e.stopPropagation()
-    const v = b.dataset.v, act = b.dataset.act
+  const draw = () => { stage.innerHTML = renderBooking(s) }
+  const apply = (act, v) => {
     if (act === 'svc') { s.svc = v; keepSlot(); s.step = 'pick' }
     else if (act === 'staff') { s.staff = +v; keepSlot(); s.step = 'pick' }
     else if (act === 'day') { s.day = +v; keepSlot() }
     else if (act === 'slot') s.slot = v
     else if (act === 'book') s.step = 'details'
-    else if (act === 'back') s.step = 'pick'
-    else if (act === 'confirm') { if (!s.name.trim()) s.name = 'Guest'; s.step = 'done' }
-    else if (act === 'reset') { Object.assign(s, initialState()) }
-    const sel = act === 'book' ? '#bd-name' : act === 'confirm' ? '[data-act="reset"]' : act === 'reset' || act === 'back' ? '[data-act="book"]' : `[data-act="${act}"][data-v="${v}"]`
-    draw(sel)
-  })
+    else if (act === 'confirm') s.step = 'done'
+    else if (act === 'reset') Object.assign(s, initialState())
+    draw()
+  }
+  el.__booking = { s, apply, stage }
+  return el.__booking
+}
+
+// Motion version: a cursor walks through a booking on its own, then loops.
+// Pauses when off screen, starts paused for reduced-motion users, and has a Pause/Play button.
+const RUNS = [
+  { svc: 'colour', staff: 1, day: 1, name: 'Sofia K.' },
+  { svc: 'nails', staff: 2, day: 4, name: 'Dimitra P.' },
+  { svc: 'cut', staff: 3, day: 2, name: 'Andreas M.' },
+]
+
+export function autoplayBooking(el, api) {
+  if (!el || !api || el.__autoplay) return
+  el.__autoplay = true
+  const { s, apply, stage } = api
+  stage.inert = true
+  stage.setAttribute('aria-hidden', 'true')
+
+  const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches
+  let playing = !reduce
+  let visible = false
+
+  const cur = document.createElement('div')
+  cur.setAttribute('aria-hidden', 'true')
+  cur.style.cssText = 'position:absolute;left:0;top:0;z-index:10;pointer-events:none;transition:transform .85s cubic-bezier(.65,0,.35,1),opacity .3s;will-change:transform'
+  cur.innerHTML = '<svg width="20" height="22" viewBox="0 0 18 20" style="display:block;filter:drop-shadow(0 2px 3px rgb(0 0 0/.25))"><path d="M1 1l15 7.5-6.5 1.8L6.7 18z" fill="#3D6BFF" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/></svg>' +
+    '<span class="ml-3 -mt-1 block w-max rounded-md rounded-tl-none bg-select px-2 py-0.5 text-[11px] font-medium text-white">Customer</span>'
+  el.appendChild(cur)
+
+  const bar = document.createElement('div')
+  bar.className = 'mt-5 flex items-center justify-center gap-3 text-[12px] text-muted'
+  bar.innerHTML = '<button type="button" class="rounded-full bg-white px-3 py-1 font-medium text-ink ring-1 ring-line hover:ring-ink/40"></button><span>A customer books in under a minute, no account needed.</span>'
+  el.appendChild(bar)
+  const btn = bar.querySelector('button')
+  const label = () => { btn.textContent = playing ? 'Pause demo' : 'Play demo'; btn.setAttribute('aria-pressed', String(!playing)); cur.style.opacity = playing ? '1' : '0' }
+  btn.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); playing = !playing; label() })
+  label()
+
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver((en) => { visible = en[0].isIntersecting }, { threshold: 0.35 }).observe(el)
+  } else visible = true
+
+  const wait = (ms) => new Promise((r) => setTimeout(r, ms))
+  const gate = async () => { while (!(playing && visible && el.isConnected)) await wait(250) }
+  const sleep = async (ms) => { await gate(); await wait(ms); await gate() }
+
+  const place = (x, y) => { cur.style.transform = `translate(${x}px,${y}px)` }
+  const rest = () => place(el.clientWidth * 0.82, el.clientHeight * 0.9)
+  const moveTo = async (sel) => {
+    const t = stage.querySelector(sel)
+    if (!t) return null
+    const a = el.getBoundingClientRect(), b = t.getBoundingClientRect()
+    place(b.left - a.left + b.width * 0.55, b.top - a.top + b.height * 0.55)
+    await sleep(900)
+    return t
+  }
+  const tap = async (sel, act, v) => {
+    const t = await moveTo(sel)
+    if (!t) return
+    cur.firstChild.animate([{ transform: 'scale(1)' }, { transform: 'scale(.8)' }, { transform: 'scale(1)' }], { duration: 260 })
+    const a = el.getBoundingClientRect(), b = t.getBoundingClientRect()
+    const dot = document.createElement('span')
+    dot.style.cssText = `position:absolute;z-index:9;pointer-events:none;width:28px;height:28px;border-radius:9999px;background:rgb(61 107 255/.35);left:${b.left - a.left + b.width * 0.55 - 14}px;top:${b.top - a.top + b.height * 0.55 - 14}px`
+    el.appendChild(dot)
+    dot.animate([{ transform: 'scale(.3)', opacity: 1 }, { transform: 'scale(1.6)', opacity: 0 }], { duration: 500, easing: 'ease-out' }).onfinish = () => dot.remove()
+    await wait(140)
+    apply(act, v)
+    await sleep(450)
+  }
+  const type = async (text) => {
+    const input = await moveTo('#bd-name')
+    if (!input) return
+    input.value = ''
+    for (const ch of text) { await sleep(85); input.value += ch; s.name = input.value }
+    await sleep(400)
+  }
+
+  ;(async () => {
+    rest()
+    for (let i = 0; ; i = (i + 1) % RUNS.length) {
+      const r = RUNS[i]
+      await sleep(1100)
+      await tap(`[data-act="svc"][data-v="${r.svc}"]`, 'svc', r.svc)
+      await tap(`[data-act="staff"][data-v="${r.staff}"]`, 'staff', r.staff)
+      await tap(`[data-act="day"][data-v="${r.day}"]`, 'day', r.day)
+      const free = slots(s).filter((x) => !x.taken)
+      const pick = free[Math.min(2, free.length - 1)]
+      if (pick) await tap(`[data-act="slot"][data-v="${pick.t}"]`, 'slot', pick.t)
+      await tap('[data-act="book"]', 'book')
+      await type(r.name)
+      await tap('[data-act="confirm"]', 'confirm')
+      rest()
+      await sleep(3200)
+      await tap('[data-act="reset"]', 'reset')
+      rest()
+    }
+  })()
 }
