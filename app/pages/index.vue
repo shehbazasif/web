@@ -1,0 +1,172 @@
+<script setup lang="ts">
+import { profile, projects, process, skills, experience } from '~/data/site'
+// @ts-ignore plain JS module shared with the static preview
+import { heroResize } from '~/lib/hero-resize.js'
+const heroRoot = ref<HTMLElement | null>(null)
+onMounted(() => heroResize(heroRoot.value))
+</script>
+
+<template>
+  <div>
+    <!-- HERO: the headline is a selected layer on a canvas -->
+    <section class="canvas-dots relative overflow-hidden">
+      <div data-hero-bounds class="mx-auto max-w-6xl px-4 pb-10 pt-16 sm:px-8 md:pb-12 md:pt-24">
+        <div class="flex flex-wrap items-center gap-x-4 gap-y-2">
+          <p class="eyebrow">{{ profile.role }} · {{ profile.location }}</p>
+          <p class="flex items-center gap-2 rounded-full bg-sheet px-2.5 py-1 text-xs text-muted ring-1 ring-line">
+            <span class="relative flex size-2"><span class="absolute inline-flex size-full animate-ping rounded-full bg-emerald-400 opacity-60" /><span class="relative inline-flex size-2 rounded-full bg-emerald-500" /></span>
+            Available from January
+          </p>
+        </div>
+
+        <div ref="heroRoot" class="relative mt-12 inline-block md:mt-16">
+          <SelectionFrame label="Headline" class="hero-in" data-hero-frame>
+            <h1 class="hero-h1 px-3 py-2 sm:px-5 sm:py-3">
+              <span class="hero-word display-wide block">Interfaces</span>
+              <span class="hero-word display-narrow block pb-[0.06em] text-muted">that get out</span>
+              <span class="hero-word display-wide block whitespace-nowrap">of the way.</span>
+            </h1>
+          </SelectionFrame>
+
+          <!-- cursor + name tag, like a collaborator in the file -->
+          <div data-hero-cursor class="pointer-events-none absolute -bottom-12 right-[8%] z-10 flex items-start sm:-bottom-10" aria-hidden="true">
+            <svg width="18" height="20" viewBox="0 0 18 20" class="origin-top-left drop-shadow-sm"><path d="M1 1l15 7.5-6.5 1.8L6.7 18z" fill="#E5337A" stroke="#fff" stroke-width="1.5" stroke-linejoin="round" /></svg>
+            <span class="ml-0.5 mt-4 rounded-md rounded-tl-none bg-redline px-2 py-1 text-xs font-medium text-white">{{ profile.first }}</span>
+          </div>
+
+          <div class="spec absolute left-0 top-full mt-4" aria-hidden="true">
+            <div class="flex flex-wrap gap-1">
+              <span data-spec="bold" class="spec-tag">Sora 700 · 136px</span>
+              <span data-spec="light" class="spec-tag">Sora 300 · 136px</span>
+              <span data-spec="lh" class="spec-tag">line-height 0.98 · 133px</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-20 grid gap-8 md:mt-24 md:grid-cols-[1fr_auto] md:items-end">
+          <p class="spec-outline max-w-xl text-lg leading-relaxed text-ink/80 md:text-xl">{{ profile.intro }}</p>
+          <div class="flex flex-wrap gap-3">
+            <NuxtLink to="/#work" class="rounded-lg bg-ink px-5 py-3 font-medium text-white transition hover:bg-ink/85">See selected work</NuxtLink>
+            <a :href="`mailto:${profile.email}`" class="rounded-lg border border-ink/20 bg-sheet px-5 py-3 font-medium transition hover:border-ink/50">Email me</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <SpecGap :px="96" />
+
+    <!-- WORK -->
+    <section id="work" class="scroll-mt-20">
+      <div class="mx-auto max-w-6xl px-4 pb-24 pt-12 sm:px-8">
+        <div class="mb-14 flex flex-wrap items-end justify-between gap-4">
+          <h2 class="text-[clamp(2.25rem,5vw,3.75rem)]"><span class="display-wide">Selected</span> <span class="display-narrow text-muted">work</span></h2>
+          <p class="max-w-xs text-sm text-muted">Six projects, two of them live client work. Hover a project to play its key flow.</p>
+        </div>
+
+        <ul class="grid gap-x-8 gap-y-16 md:grid-cols-2">
+          <li v-for="(p, i) in projects" :key="p.slug" :class="i < 2 ? 'md:col-span-2' : ''">
+            <!-- The interactive card can't be one big link, or every click in the demo would navigate. -->
+            <div class="group" data-demo-host>
+              <p class="mb-2.5 flex items-center gap-1.5 font-mono text-[11px] text-muted transition-colors group-hover:text-select group-focus-visible:text-select">
+                <svg viewBox="0 0 12 12" class="size-3" aria-hidden="true"><path d="M3 0v12M9 0v12M0 3h12M0 9h12" stroke="currentColor" fill="none" /></svg>
+                {{ p.client }} / {{ p.platform }}
+                <span v-if="p.status" class="ml-1.5 rounded-full bg-redline/10 px-2 py-0.5 text-redline">{{ p.status }}</span>
+              </p>
+              <SelectionFrame :always="false">
+                <div class="spec-outline flex min-h-[420px] flex-col bg-sheet md:min-h-[460px]"><div class="flex flex-1 ring-1 ring-line transition-colors group-hover:bg-white">
+                  <ProjectMock :kind="p.mock" trigger="hover" />
+                </div></div>
+              </SelectionFrame>
+              <div class="mt-7 grid gap-3">
+                <h3 class="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2 text-xl font-semibold leading-snug tracking-tight">
+                  <NuxtLink :to="`/work/${p.slug}`" class="hover:underline hover:decoration-select hover:decoration-2 hover:underline-offset-4">{{ p.title }}</NuxtLink>
+                  <NuxtLink :to="`/work/${p.slug}`" class="text-sm font-medium text-select hover:underline">Read the case study →</NuxtLink>
+                </h3>
+                <p class="text-muted">{{ p.summary }}</p>
+                <dl class="mt-2 flex flex-wrap gap-x-8 gap-y-2 border-t border-line pt-4">
+                  <div v-for="o in p.outcome" :key="o.label">
+                    <dt class="sr-only">{{ o.label }}</dt>
+                    <dd><span class="font-display text-lg font-semibold tracking-tight">{{ o.value }}</span> <span class="text-sm text-muted">{{ o.label }}</span></dd>
+                  </div>
+                </dl>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <SpecGap :px="96" />
+
+    <!-- PROCESS: a real sequence, so it's numbered -->
+    <section id="process" class="scroll-mt-20 border-y border-line bg-sheet">
+      <div class="mx-auto max-w-6xl px-4 py-24 sm:px-8">
+        <div class="grid gap-10 md:grid-cols-[1fr_2fr]">
+          <div>
+            <h2 class="text-[clamp(2.25rem,5vw,3.75rem)]"><span class="display-wide block">How I</span><span class="display-narrow block text-muted">work</span></h2>
+            <p class="mt-5 max-w-xs text-muted">The same six steps, whether it's a single feature or a whole product. Steps 3–5 usually loop.</p>
+          </div>
+          <ol class="grid gap-px overflow-hidden rounded-xl bg-line ring-1 ring-line sm:grid-cols-2 lg:grid-cols-3">
+            <li v-for="(s, i) in process" :key="s.step" class="group bg-sheet p-6 transition-colors hover:bg-white">
+              <span class="font-mono text-xs text-select">{{ String(i + 1).padStart(2, '0') }}</span>
+              <h3 class="mt-6 font-display text-2xl font-semibold tracking-[-0.03em] transition-colors group-hover:text-select">{{ s.step }}</h3>
+              <p class="mt-2 text-sm leading-relaxed text-muted">{{ s.body }}</p>
+            </li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <SpecGap :px="96" />
+
+    <!-- ABOUT -->
+    <section id="about" class="scroll-mt-20">
+      <div class="mx-auto grid max-w-6xl gap-16 px-4 py-24 sm:px-8 md:grid-cols-2">
+        <div>
+          <h2 class="text-[clamp(2.25rem,5vw,3.75rem)]"><span class="display-wide">About</span></h2>
+          <div class="mt-8 space-y-5 text-lg leading-relaxed text-ink/80">
+            <p>I'm {{ profile.first }}, a UI/UX designer who also builds the interfaces I design. Since 2019 I've worked with e-commerce brands, delivery and booking startups and agencies across Pakistan, Greece and Qatar.</p>
+            <p>I'm happiest in the space between research and pixels: turning interview notes into a flow, then a prototype that settles an argument faster than a meeting would.</p>
+          </div>
+          <h3 class="eyebrow mt-14">Experience</h3>
+          <ul class="mt-4 divide-y divide-line border-y border-line">
+            <li v-for="x in experience" :key="x.org + x.years" class="grid grid-cols-[6.5rem_1fr] gap-x-4 gap-y-1 py-4 text-sm sm:grid-cols-[8rem_1fr]">
+              <span class="font-mono text-[13px] text-muted">{{ x.years }}</span>
+              <div class="min-w-0">
+                <p class="font-medium">{{ x.role }} <span class="font-normal text-muted">· {{ x.org }}</span></p>
+                <p class="mt-0.5 text-[13px] text-muted">{{ x.place }}</p>
+                <p class="mt-1.5 text-[13px] leading-relaxed text-ink/75">{{ x.note }}</p>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <div class="grid content-start gap-8 sm:grid-cols-2">
+          <div v-for="(items, group) in skills" :key="group" class="rounded-xl bg-sheet p-6 ring-1 ring-line">
+            <h3 class="eyebrow">{{ group }}</h3>
+            <ul class="mt-4 space-y-2">
+              <li v-for="it in items" :key="it" class="text-[15px]">{{ it }}</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <ContactSection />
+  </div>
+</template>
+
+<style scoped>
+.hero-h1 { font-size: calc(clamp(2.75rem, 11vw, 8.5rem) * var(--k, 1)); }
+.hero-word { transition: color .3s ease; }
+.hero-word:hover { color: var(--color-select); }
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero-in { animation: frame-in .9s cubic-bezier(.2,.8,.2,1) backwards; }
+  .hero-in .hero-word { animation: word-in .9s cubic-bezier(.2,.8,.2,1) both; }
+  .hero-in .hero-word:nth-child(2) { animation-delay: .08s; }
+  .hero-in .hero-word:nth-child(3) { animation-delay: .16s; }
+}
+@keyframes frame-in { from { clip-path: inset(-12px 100% -40px -12px); } to { clip-path: inset(-12px -20% -40px -12px); } }
+@keyframes word-in { from { transform: translateY(.35em); opacity: 0; } }
+</style>
