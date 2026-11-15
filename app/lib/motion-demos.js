@@ -151,6 +151,93 @@ const booking = {
   },
 }
 
+/* ───────────────────────────── FeroFerto · rider portal ───────────────────────────── */
+const STAGES = ['Registration', 'Verification', 'Assignment', 'Live', 'Payroll']
+const RIDER_DOCS = [['ID card', 'id_card.jpg'], ['Driving licence', 'licence.jpg'], ['Tax number (AFM)', '0•• ••• 412']]
+const rider = {
+  cursor: 'Rider',
+  caption: 'A rider signs up, gets verified, collects gear and sees pay split by platform.',
+  initial: () => ({ stage: 0, platforms: [], city: '', docs: [0, 0, 0], gear: false, toast: '' }),
+  render(s) {
+    const rail = `<ol class="flex items-center gap-1">${STAGES.map((n, i) => {
+      const done = i < s.stage, on = i === s.stage
+      return `<li class="flex flex-1 flex-col gap-1.5">
+        <span class="h-1 rounded-full transition-colors duration-500 ${done ? 'bg-emerald-500' : on ? 'bg-select' : 'bg-line'}"></span>
+        <span class="truncate text-[9px] font-medium ${on ? 'text-ink' : done ? 'text-emerald-600' : 'text-muted'}">${n}</span></li>`
+    }).join('')}</ol>`
+    let body
+    if (s.stage === 0) {
+      const chip = (id, label, color) => {
+        const on = s.platforms.includes(id)
+        return `<span data-plat="${id}" class="flex flex-1 items-center gap-2 rounded-xl p-2.5 transition-colors ${on ? 'bg-select/8 ring-2 ring-select' : 'ring-1 ring-line'}">
+          <span class="grid size-7 place-items-center rounded-lg text-[10px] font-bold text-white" style="background:${color}">${label[0]}</span>
+          <span class="flex-1 text-[12px] font-semibold">${label}</span>
+          <span class="grid size-4 place-items-center rounded-full ${on ? 'bg-select text-white' : 'ring-1 ring-line'}">${on ? CHECK : ''}</span></span>`
+      }
+      body = `<p class="text-[15px] font-semibold">Where do you want to ride?</p>
+        <p class="mt-0.5 text-[11px] text-muted">Pick one or both. You can add more later.</p>
+        <div class="mt-3 flex gap-2">${chip('efood', 'EFOOD', '#E5282C')}${chip('wolt', 'Wolt', '#009DE0')}</div>
+        <p class="mt-3 text-[11px] font-medium">City</p>
+        <span data-city class="mt-1 flex items-center justify-between rounded-lg px-2.5 py-2 text-[12px] ring-1 ${s.city ? 'ring-ink/30' : 'ring-line text-muted'}">${s.city || 'Choose a city'}<span class="text-muted">▾</span></span>
+        <span data-next class="mt-4 block rounded-lg py-2.5 text-center text-[12px] font-semibold ${s.platforms.length && s.city ? 'bg-ink text-white' : 'bg-paper text-muted'}">Continue</span>`
+    } else if (s.stage === 1) {
+      const all = s.docs.every((d) => d === 2)
+      body = `<div class="flex items-center justify-between"><p class="text-[15px] font-semibold">Verify your identity</p>
+          <span class="rounded-full px-2 py-0.5 text-[9px] font-semibold ${all ? 'bg-emerald-500/15 text-emerald-700' : 'bg-amber-400/20 text-amber-700'}">${all ? 'Verified' : 'In review'}</span></div>
+        <p class="mt-0.5 text-[11px] text-muted">Used for ${s.platforms.length > 1 ? 'EFOOD and Wolt' : 'your platform'}. Upload once.</p>
+        <ul class="mt-2 divide-y divide-line/70">${RIDER_DOCS.map(([n, f], k) => {
+          const st = s.docs[k]
+          return `<li class="flex items-center gap-2.5 py-2">
+            ${st === 2 ? `<span class="grid size-5 place-items-center rounded-md bg-emerald-500 text-white">${CHECK}</span>` : st === 1 ? '<span class="size-5 animate-spin rounded-full border-2 border-select/25 border-t-select"></span>' : '<span class="size-5 rounded-md ring-1 ring-line"></span>'}
+            <span class="flex-1 text-[12px]">${n}</span>
+            ${st === 2 ? `<span class="font-mono text-[10px] text-emerald-600">${f}</span>` : st === 1 ? '<span class="font-mono text-[10px] text-muted">Checking…</span>' : `<span data-rdoc="${k}" class="rounded-md px-2 py-1 text-[11px] font-medium text-select ring-1 ring-select/40">Upload</span>`}</li>`
+        }).join('')}</ul>
+        <span data-next class="mt-3 block rounded-lg py-2.5 text-center text-[12px] font-semibold ${all ? 'bg-ink text-white' : 'bg-paper text-muted'}">Continue</span>`
+    } else if (s.stage === 2) {
+      body = `<p class="text-[15px] font-semibold">Your gear and first shift</p>
+        <div class="mt-3 grid grid-cols-3 gap-2 text-center text-[10px]">
+          ${[['Thermal bag', '▣'], ['Helmet', '◒'], ['Phone mount', '▯']].map(([n, i]) => `<div class="rounded-lg bg-paper/70 px-1 py-2.5"><span class="block text-[18px] leading-none">${i}</span><span class="mt-1.5 block font-medium">${n}</span></div>`).join('')}
+        </div>
+        <div class="mt-3 rounded-lg p-2.5 ring-1 ring-line"><p class="font-mono text-[9px] text-muted">FIRST SHIFT</p><p class="mt-0.5 text-[12px] font-semibold">Mon 18:00–23:00 · ${s.city || 'Athens'} Centre</p></div>
+        <span data-gear class="mt-3 block rounded-lg py-2.5 text-center text-[12px] font-semibold ${s.gear ? 'bg-emerald-500 text-white' : 'bg-ink text-white'}">${s.gear ? 'Pickup booked · Sat 11:00' : 'Book gear pickup'}</span>`
+    } else {
+      body = `<div class="flex items-baseline justify-between"><p class="text-[15px] font-semibold">This week's pay</p><span class="font-mono text-[10px] text-muted">Paid Friday</span></div>
+        <p class="mt-2 font-display text-[30px] font-bold tracking-tight">€642.80</p>
+        <div class="mt-2 flex h-2 overflow-hidden rounded-full"><span class="bg-[#E5282C]" style="width:64%"></span><span class="bg-[#009DE0]" style="width:36%"></span></div>
+        <ul class="mt-3 space-y-1.5 text-[12px]">
+          <li class="flex justify-between"><span class="flex items-center gap-1.5"><span class="size-2 rounded-full bg-[#E5282C]"></span>EFOOD · 61 deliveries</span><span class="font-mono">€412.30</span></li>
+          <li class="flex justify-between"><span class="flex items-center gap-1.5"><span class="size-2 rounded-full bg-[#009DE0]"></span>Wolt · 34 deliveries</span><span class="font-mono">€230.50</span></li>
+        </ul>`
+    }
+    return `<div class="relative mx-auto w-full max-w-[380px]">
+      <div class="${CARD} p-4 sm:p-5">
+        <div class="mb-4 flex items-center justify-between"><span class="text-[13px] font-bold tracking-tight">fero<span class="text-select">ferto</span></span><span class="font-mono text-[10px] text-muted">Rider portal</span></div>
+        ${rail}
+        <div class="mt-4">${body}</div>
+      </div>
+      ${s.toast ? `<div class="absolute -bottom-4 left-1/2 flex -translate-x-1/2 items-center gap-1.5 whitespace-nowrap rounded-full bg-ink px-3 py-1.5 text-[11px] text-white shadow-lg"><span class="text-emerald-400">${CHECK}</span>${s.toast}</div>` : ''}
+    </div>`
+  },
+  async play(c) {
+    const s = c.s
+    await c.tap('[data-plat="efood"]', () => { s.platforms.push('efood') })
+    await c.tap('[data-plat="wolt"]', () => { s.platforms.push('wolt') })
+    await c.tap('[data-city]', () => { s.city = 'Athens' })
+    await c.tap('[data-next]', () => { s.stage = 1 })
+    for (let k = 0; k < 3; k++) {
+      await c.tap(`[data-rdoc="${k}"]`, () => { s.docs[k] = 1 })
+      await c.sleep(550)
+      c.set(() => { s.docs[k] = 2 })
+    }
+    await c.sleep(500)
+    await c.tap('[data-next]', () => { s.stage = 2 })
+    await c.tap('[data-gear]', () => { s.gear = true; s.toast = 'Gear pickup booked' })
+    await c.sleep(1100)
+    c.set(() => { s.toast = ''; s.stage = 4 })
+    c.rest(); await c.sleep(3200)
+  },
+}
+
 /* ───────────────────────────── Ledgerly · onboarding ───────────────────────────── */
 const DOCS = [
   ['Owner ID or passport', 'id_front.jpg'],
@@ -413,7 +500,11 @@ const mobile = {
 }
 
 /* ───────────────────────────── engine ───────────────────────────── */
-export const DEMOS = { booking, onboarding, calendar, system, mobile }
+export const DEMOS = { booking, rider, onboarding, calendar, system, mobile }
+
+// Only one demo plays at a time. Demos on screen take turns, one loop each,
+// so two cards side by side never move at once.
+const TURN = { owner: null }
 
 export function renderDemo(kind) {
   const d = DEMOS[kind]
@@ -452,7 +543,8 @@ export function mountDemo(el) {
   bar.innerHTML = '<button type="button" class="rounded-full bg-white/90 px-3 py-1 text-[11px] font-medium text-ink ring-1 ring-line hover:ring-ink/40"></button>'
   el.appendChild(bar)
   const btn = bar.firstChild
-  const label = () => { btn.textContent = playing ? 'Pause demo' : 'Play demo'; btn.setAttribute('aria-pressed', String(!playing)); cur.style.opacity = playing ? '1' : '0' }
+  const shade = () => { cur.style.opacity = !playing ? '0' : TURN.owner === el ? '1' : '.35' }
+  const label = () => { btn.textContent = playing ? 'Pause demo' : 'Play demo'; btn.setAttribute('aria-pressed', String(!playing)); shade() }
   btn.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); playing = !playing; label() })
   label()
 
@@ -460,7 +552,14 @@ export function mountDemo(el) {
   else visible = true
 
   const wait = (ms) => new Promise((r) => setTimeout(r, ms))
-  const gate = async () => { while (!(playing && visible && el.isConnected)) await wait(250) }
+  const release = () => { if (TURN.owner === el) TURN.owner = null; shade() }
+  const gate = async () => {
+    for (;;) {
+      if (!(playing && visible && el.isConnected)) { release(); await wait(250); continue }
+      if (TURN.owner && TURN.owner !== el) { shade(); await wait(200); continue }
+      TURN.owner = el; shade(); return
+    }
+  }
   const sleep = async (ms) => { await gate(); await wait(ms); await gate() }
   const place = (x, y) => { cur.style.transform = `translate(${x}px,${y}px)` }
   const rest = () => place(Math.max(0, el.clientWidth - 150), Math.max(40, el.clientHeight - 70))
@@ -501,6 +600,9 @@ export function mountDemo(el) {
       s = d.initial(); draw(); rest()
       await sleep(1000)
       await d.play(ctx, i)
+      // Hand over to the next demo on screen, then reset and wait our turn.
+      release(); await wait(900)
+      s = d.initial(); draw(); rest()
     }
   })()
 }

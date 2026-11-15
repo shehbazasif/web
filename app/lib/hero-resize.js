@@ -14,7 +14,17 @@ export function heroResize(root) {
 
   let k = 1, auto = true, visible = false, dragging = false
   const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches
-  const setK = (v) => { k = v; h1.style.setProperty('--k', v.toFixed(4)) }
+  // Spec mode labels show the real, live type values while the frame resizes.
+  const specs = root.querySelectorAll('[data-spec]')
+  const syncSpecs = () => {
+    const fs = parseFloat(getComputedStyle(h1).fontSize)
+    specs.forEach((t) => {
+      const v = t.dataset.spec
+      t.textContent = v === 'bold' ? `Sora 700 · ${Math.round(fs)}px` : v === 'light' ? `Sora 300 · ${Math.round(fs)}px` : `line-height 0.98 · ${Math.round(fs * 0.98)}px`
+    })
+  }
+  const setK = (v) => { k = v; h1.style.setProperty('--k', v.toFixed(4)); syncSpecs() }
+  syncSpecs()
   const bounds = () => {
     const wrap = root.closest('[data-hero-bounds]') || root.parentElement
     const avail = wrap.getBoundingClientRect().right - frame.getBoundingClientRect().left - 8
@@ -77,7 +87,7 @@ export function heroResize(root) {
     handle.addEventListener('pointerup', up)
     handle.addEventListener('pointercancel', up)
   })
-  window.addEventListener('resize', () => { const b = bounds(); if (k > b.max) setK(b.max); if (auto) place(restPos(), 0) })
+  window.addEventListener('resize', () => { const b = bounds(); if (k > b.max) setK(b.max); syncSpecs(); if (auto) place(restPos(), 0) })
 
   if ('IntersectionObserver' in window) new IntersectionObserver((en) => { visible = en[0].isIntersecting }, { threshold: 0.3 }).observe(frame)
   else visible = true

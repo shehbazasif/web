@@ -4,7 +4,7 @@ export const profile = {
   first: 'Shehbaz',
   role: 'UI/UX Designer',
   location: 'Doha, Qatar',
-  email: 'muhammadshehbazasif@gmail.com',
+  email: 'm.shahbazasif512@gmail.com',
   phone: '+974 5123 8500',
   phoneHref: 'tel:+97451238500',
   available: 'Open to product design roles and freelance projects from January',
@@ -18,7 +18,7 @@ export const profile = {
   ],
 }
 
-export type Mock = 'booking' | 'onboarding' | 'calendar' | 'system' | 'mobile'
+export type Mock = 'booking' | 'rider' | 'onboarding' | 'calendar' | 'system' | 'mobile'
 
 export interface Project {
   slug: string
@@ -59,6 +59,29 @@ export const projects: Project[] = [
       { title: 'Small things for the front desk', body: 'A printable QR code for the booking link, QR badges staff scan to check in, and customer import from an existing spreadsheet so nobody starts from zero.' },
     ],
     learned: 'Designing the booking page first, before the dashboard, kept every screen tied to an appointment a real customer makes.',
+  },
+  {
+    slug: 'feroferto',
+    title: 'One portal from rider sign-up to first payout',
+    client: 'FeroFerto',
+    year: '2026',
+    role: 'UI/UX designer · freelance',
+    platform: 'Web · Nuxt',
+    status: 'Current client',
+    summary: 'Onboarding, verification, gear and payroll for delivery riders working with EFOOD and Wolt in Greece.',
+    mock: 'rider',
+    outcome: [
+      { value: '5', label: 'stages, sign-up to payroll' },
+      { value: '2', label: 'delivery platforms in one account' },
+    ],
+    problem:
+      'Getting a rider on the road means a platform account, identity checks, gear, shifts and pay. Before FeroFerto each of those lived in a different message thread or spreadsheet, and riders never knew which step they were on.',
+    approach: [
+      { title: 'One lifecycle, always visible', body: 'Registration, verification, assignment, live coordination and payroll sit on a single progress rail, so a rider always knows what is done and what comes next.' },
+      { title: 'Pick platforms once', body: 'Riders choose EFOOD, Wolt or both during registration. Documents are collected one time and reused for every platform.' },
+      { title: 'Pay that explains itself', body: 'Each payout is split by platform, so riders can match it to the deliveries they made without asking support.' },
+    ],
+    learned: 'Riders open the app between deliveries, standing next to a bike. Every screen has one main action and nothing to read twice.',
   },
   {
     slug: 'ledgerly-onboarding',
@@ -167,9 +190,12 @@ export const skills = {
   'Tools': ['Figma', 'FigJam', 'Framer', 'Maze', 'Notion', 'HTML/CSS'],
 }
 
+// From LinkedIn. UI/UX was the core of every role.
 export const experience = [
-  { years: '2024 — now', role: 'Senior Product Designer', org: 'Ledgerly' },
-  { years: '2022 — 2024', role: 'Product Designer', org: 'Tandem' },
-  { years: '2021 — 2022', role: 'UI/UX Designer', org: 'Freelance' },
-  { years: '2019 — 2021', role: 'Junior Designer', org: 'Studio Nine' },
+  { years: '2026 — now', role: 'UI/UX Designer', org: 'FeroFerto', place: 'Greece · freelance, remote from Doha', note: 'Rider portal and booking products, from flows to production UI.' },
+  { years: '2025 — 2026', role: 'Frontend Developer & UI/UX Designer', org: 'La Victoire DBD', place: 'Doha, Qatar', note: 'UI/UX for the company’s digital platforms, built to a premium brand.' },
+  { years: '2023 — 2025', role: 'Frontend Developer', org: 'Grey Owls Technologies', place: 'Pakistan', note: 'Turned UI/UX designs into user-focused Vue and Nuxt interfaces.' },
+  { years: '2020 — 2025', role: 'Product Designer & Web Developer', org: 'Chic and Clicks', place: 'Athens, Greece · remote', note: 'Designed and built a responsive e-commerce site, plus brand and UI visuals.' },
+  { years: '2023 — 2025', role: 'Graphic & Web Design Tutor', org: 'Fast Academy', place: 'Gujar Khan, Pakistan', note: 'Taught Photoshop, Illustrator, HTML, CSS and JavaScript.' },
+  { years: '2019 — now', role: 'Freelance Graphic Designer', org: 'Upwork', place: 'Remote', note: 'Illustration and digital design for clients worldwide.' },
 ]

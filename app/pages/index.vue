@@ -10,7 +10,7 @@ onMounted(() => heroResize(heroRoot.value))
   <div>
     <!-- HERO: the headline is a selected layer on a canvas -->
     <section class="canvas-dots relative overflow-hidden">
-      <div data-hero-bounds class="mx-auto max-w-6xl px-4 pb-24 pt-16 sm:px-8 md:pb-32 md:pt-24">
+      <div data-hero-bounds class="mx-auto max-w-6xl px-4 pb-10 pt-16 sm:px-8 md:pb-12 md:pt-24">
         <div class="flex flex-wrap items-center gap-x-4 gap-y-2">
           <p class="eyebrow">{{ profile.role }} · {{ profile.location }}</p>
           <p class="flex items-center gap-2 rounded-full bg-sheet px-2.5 py-1 text-xs text-muted ring-1 ring-line">
@@ -36,9 +36,9 @@ onMounted(() => heroResize(heroRoot.value))
 
           <div class="spec absolute left-0 top-full mt-4" aria-hidden="true">
             <div class="flex flex-wrap gap-1">
-              <span class="spec-tag">Sora 700 · −4.5%</span>
-              <span class="spec-tag">Sora 300 · −4.5%</span>
-              <span class="spec-tag">line-height 0.98</span>
+              <span data-spec="bold" class="spec-tag">Sora 700 · 136px</span>
+              <span data-spec="light" class="spec-tag">Sora 300 · 136px</span>
+              <span data-spec="lh" class="spec-tag">line-height 0.98 · 133px</span>
             </div>
           </div>
         </div>
@@ -57,14 +57,14 @@ onMounted(() => heroResize(heroRoot.value))
 
     <!-- WORK -->
     <section id="work" class="scroll-mt-20">
-      <div class="mx-auto max-w-6xl px-4 py-24 sm:px-8">
+      <div class="mx-auto max-w-6xl px-4 pb-24 pt-12 sm:px-8">
         <div class="mb-14 flex flex-wrap items-end justify-between gap-4">
           <h2 class="text-[clamp(2.25rem,5vw,3.75rem)]"><span class="display-wide">Selected</span> <span class="display-narrow text-muted">work</span></h2>
-          <p class="max-w-xs text-sm text-muted">Five projects from the last three years. Each one plays the key flow on its own.</p>
+          <p class="max-w-xs text-sm text-muted">Six projects, two of them live client work. Each one plays the key flow on its own.</p>
         </div>
 
         <ul class="grid gap-x-8 gap-y-16 md:grid-cols-2">
-          <li v-for="(p, i) in projects" :key="p.slug" :class="i === 0 ? 'md:col-span-2' : ''">
+          <li v-for="(p, i) in projects" :key="p.slug" :class="i < 2 ? 'md:col-span-2' : ''">
             <!-- The interactive card can't be one big link, or every click in the demo would navigate. -->
             <div class="group">
               <p class="mb-2.5 flex items-center gap-1.5 font-mono text-[11px] text-muted transition-colors group-hover:text-select group-focus-visible:text-select">
@@ -125,15 +125,18 @@ onMounted(() => heroResize(heroRoot.value))
         <div>
           <h2 class="text-[clamp(2.25rem,5vw,3.75rem)]"><span class="display-wide">About</span></h2>
           <div class="mt-8 space-y-5 text-lg leading-relaxed text-ink/80">
-            <p>I'm {{ profile.first }}, a product designer who started out building websites and never stopped caring how things get made. I've spent the last six years on fintech, health and logistics products.</p>
+            <p>I'm {{ profile.first }}, a UI/UX designer who also builds the interfaces I design. Since 2019 I've worked with e-commerce brands, delivery and booking startups and agencies across Pakistan, Greece and Qatar.</p>
             <p>I'm happiest in the space between research and pixels: turning interview notes into a flow, then a prototype that settles an argument faster than a meeting would.</p>
           </div>
           <h3 class="eyebrow mt-14">Experience</h3>
           <ul class="mt-4 divide-y divide-line border-y border-line">
-            <li v-for="x in experience" :key="x.years" class="grid grid-cols-[7.5rem_1fr] gap-4 py-3.5 text-sm sm:grid-cols-[9rem_1fr_auto]">
-              <span class="font-mono text-muted">{{ x.years }}</span>
-              <span class="font-medium">{{ x.role }}</span>
-              <span class="col-start-2 text-muted sm:col-start-auto">{{ x.org }}</span>
+            <li v-for="x in experience" :key="x.org + x.years" class="grid grid-cols-[6.5rem_1fr] gap-x-4 gap-y-1 py-4 text-sm sm:grid-cols-[8rem_1fr]">
+              <span class="font-mono text-[13px] text-muted">{{ x.years }}</span>
+              <div class="min-w-0">
+                <p class="font-medium">{{ x.role }} <span class="font-normal text-muted">· {{ x.org }}</span></p>
+                <p class="mt-0.5 text-[13px] text-muted">{{ x.place }}</p>
+                <p class="mt-1.5 text-[13px] leading-relaxed text-ink/75">{{ x.note }}</p>
+              </div>
             </li>
           </ul>
         </div>
