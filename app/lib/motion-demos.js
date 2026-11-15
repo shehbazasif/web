@@ -151,74 +151,90 @@ const booking = {
   },
 }
 
-/* ───────────────────────────── FeroFerto · workforce console ───────────────────────────── */
-// Modelled on feroferto.com/demo (fictional demo data), in the console's own dark theme.
-const FF = { bg: '#0A1120', card: '#0F1A2E', line: '#1E2B45', fg: '#E6EDF7', mu: '#8A98B3', cy: '#22D3EE', vi: '#8B5CF6' }
-const ROAD = [3, 8, 13, 16, 18, 18, 16, 15, 12, 13, 13, 13, 12, 10, 6, 1]
-const MATCHES = [
-  ['NA', 'Nikos Alexiou', 'Monastiraki · motorbike · 4.9★', 83, ['Exact area', 'Partial cover']],
-  ['YG', 'Yannis Georgiou', 'Pangrati · motorbike · 4.5★', 74, ['Same zone', 'Full shift cover']],
-  ['SV', 'Stathis Vranos', 'Koukaki · motorbike · 4.7★', 68, ['Same zone', 'Full shift cover']],
-]
-const WEEK = [['Tue', 24, 22], ['Wed', 26, 24], ['Thu', 25, 25], ['Fri', 31, 26], ['Sat', 34, 27], ['Sun', 30, 23], ['Mon', 23, 22]]
-const fconsole = {
-  cursor: 'Ops manager',
-  caption: 'A delivery company checks its fleet, matches riders to a shift with explained scores, and plans for the weekend gap.',
-  initial: () => ({ tab: 'overview', company: '', matched: false, hired: false }),
+/* ───────────────────────────── FeroFerto · rider portal ───────────────────────────── */
+const STAGES = ['Registration', 'Verification', 'Assignment', 'Live', 'Payroll']
+const RIDER_DOCS = [['ID card', 'id_card.jpg'], ['Driving licence', 'licence.jpg'], ['Tax number (AFM)', '0•• ••• 412']]
+const rider = {
+  cursor: 'Rider',
+  caption: 'A rider signs up, gets verified, collects gear and sees pay split by platform.',
+  initial: () => ({ stage: 0, platforms: [], city: '', docs: [0, 0, 0], gear: false, toast: '' }),
   render(s) {
-    const tabs = [['overview', 'Overview'], ['matching', 'Smart matching'], ['forecast', 'Forecasting']]
-    const tabBar = `<div class="flex gap-1">${tabs.map(([id, n]) => `<span data-tab="${id}" class="rounded-md px-2 py-1 font-mono text-[9px] uppercase tracking-wider" style="${s.tab === id ? `color:${FF.cy};box-shadow:inset 0 0 0 1px ${FF.cy}66;background:${FF.cy}14` : `color:${FF.mu};box-shadow:inset 0 0 0 1px ${FF.line}`}">${n}</span>`).join('')}</div>`
-    const kpi = (l, v, sub, accent) => `<div class="rounded-lg p-2" style="box-shadow:inset 0 0 0 1px ${FF.line}"><p class="font-mono text-[8px] uppercase tracking-wider" style="color:${FF.mu}">${l}</p><p class="mt-0.5 text-[18px] font-bold leading-none" style="color:${accent ? FF.cy : FF.fg}">${v}</p><p class="mt-1 text-[9px]" style="color:${FF.mu}">${sub}</p></div>`
+    const rail = `<ol class="flex items-center gap-1">${STAGES.map((n, i) => {
+      const done = i < s.stage, on = i === s.stage
+      return `<li class="flex flex-1 flex-col gap-1.5">
+        <span class="h-1 rounded-full transition-colors duration-500 ${done ? 'bg-emerald-500' : on ? 'bg-select' : 'bg-line'}"></span>
+        <span class="truncate text-[9px] font-medium ${on ? 'text-ink' : done ? 'text-emerald-600' : 'text-muted'}">${n}</span></li>`
+    }).join('')}</ol>`
     let body
-    if (s.tab === 'overview') {
-      const max = 18
-      body = `<div class="grid grid-cols-4 gap-1.5">${kpi('Riders', '30', '16 areas')}${kpi('Available', '18', 'ready now', true)}${kpi('On shift', '8', 'delivering')}${kpi('Utilization', '83%', 'weekly hours', true)}</div>
-        <div class="mt-2 rounded-lg p-2.5" style="box-shadow:inset 0 0 0 1px ${FF.line}">
-          <p class="text-[11px] font-semibold">Riders on the road · today</p>
-          <div class="mt-2 flex h-[86px] items-end gap-[3px]">${ROAD.map((v, i) => `<span class="flex-1 rounded-t-sm" style="height:${(v / max) * 100}%;background:linear-gradient(${FF.cy},${FF.vi});opacity:${i === 12 ? 1 : 0.75};${i === 12 ? `box-shadow:0 0 0 1.5px ${FF.fg}` : ''}"></span>`).join('')}</div>
-          <div class="mt-1 flex justify-between font-mono text-[8px]" style="color:${FF.mu}"><span>08</span><span>12</span><span>16</span><span style="color:${FF.cy}">NOW</span><span>23</span></div>
-        </div>`
-    } else if (s.tab === 'matching') {
-      const chip = (n) => `<span data-co="${n}" class="rounded-md px-2 py-1 text-[10px] font-medium" style="${s.company === n ? `background:${FF.cy};color:${FF.bg}` : `box-shadow:inset 0 0 0 1px ${FF.line};color:${FF.fg}`}">${n}</span>`
-      const form = `<div class="flex flex-wrap items-center gap-1.5">${['eFOOD', 'BOX Delivery', 'Wolt'].map(chip).join('')}</div>
-        <div class="mt-2 grid grid-cols-3 gap-1.5 text-[10px]">${[['Location', 'Monastiraki'], ['Riders', '3'], ['Shift', 'Midday 12–18']].map(([l, v]) => `<div class="rounded-md px-2 py-1.5" style="box-shadow:inset 0 0 0 1px ${FF.line}"><p class="font-mono text-[8px] uppercase" style="color:${FF.mu}">${l}</p><p class="mt-0.5 font-medium">${v}</p></div>`).join('')}</div>`
-      const results = s.matched ? `<p class="mt-2.5 text-[10px]" style="color:${FF.mu}">Best 3 for <b style="color:${FF.fg}">${s.company}</b> in Monastiraki · explainable demo score</p>
-        <ul class="mt-1.5 space-y-1.5">${MATCHES.map(([ini, n, meta, sc, tags]) => `<li class="rounded-lg p-2" style="box-shadow:inset 0 0 0 1px ${FF.line}">
-          <div class="flex items-center gap-2"><span class="grid size-6 place-items-center rounded-full text-[8px] font-bold text-white" style="background:linear-gradient(135deg,${FF.cy},${FF.vi})">${ini}</span>
-            <span class="min-w-0 flex-1"><span class="block truncate text-[11px] font-semibold">${n}</span><span class="block truncate text-[9px]" style="color:${FF.mu}">${meta}</span></span>
-            <span class="text-right"><span class="block text-[15px] font-bold leading-none">${sc}</span><span class="font-mono text-[7px]" style="color:${FF.mu}">MATCH</span></span></div>
-          <div class="mt-1.5 h-1 rounded-full" style="background:${FF.line}"><div class="h-full rounded-full" style="width:${sc}%;background:linear-gradient(90deg,${FF.cy},${FF.vi})"></div></div>
-          <div class="mt-1.5 flex gap-1">${tags.map((t) => `<span class="rounded px-1.5 py-0.5 text-[8px]" style="color:${t.includes('Partial') ? '#FBBF24' : FF.cy};box-shadow:inset 0 0 0 1px ${t.includes('Partial') ? '#FBBF2466' : FF.cy + '55'}">${t}</span>`).join('')}</div>
-        </li>`).join('')}</ul>
-        <span data-hire class="mt-2 block rounded-md py-1.5 text-center text-[10px] font-semibold" style="${s.hired ? `background:#10B98122;color:#34D399` : `background:${FF.cy};color:${FF.bg}`}">${s.hired ? '✓ 3 riders requested for Midday' : 'Request these 3 riders'}</span>`
-        : `<span data-match class="mt-2.5 block rounded-md py-1.5 text-center text-[10px] font-semibold" style="${s.company ? `background:${FF.cy};color:${FF.bg}` : `box-shadow:inset 0 0 0 1px ${FF.line};color:${FF.mu}`}">Match riders</span>`
-      body = form + results
-    } else {
-      const max = 36
-      body = `<div class="grid grid-cols-3 gap-1.5">${kpi('7-day peak', '34', 'riders · Sat evening')}${kpi('Largest gap', '−7', 'Sat and Sun', true)}${kpi('Weekend', '+30%', 'vs weekdays')}</div>
-        <div class="mt-2 rounded-lg p-2.5" style="box-shadow:inset 0 0 0 1px ${FF.line}">
-          <div class="flex items-center justify-between"><p class="text-[11px] font-semibold">Needed vs available</p><span class="flex gap-2 text-[8px]" style="color:${FF.mu}"><span><span class="mr-1 inline-block size-1.5 rounded-full" style="background:${FF.vi}"></span>Needed</span><span><span class="mr-1 inline-block size-1.5 rounded-full" style="background:${FF.cy}"></span>Available</span></span></div>
-          <div class="mt-2 flex h-[78px] items-end gap-2">${WEEK.map(([d, need, av]) => `<div class="flex flex-1 flex-col items-center gap-1"><div class="flex h-[64px] w-full items-end justify-center gap-[2px]"><span class="w-1/2 rounded-t-sm" style="height:${(need / max) * 100}%;background:${FF.vi}"></span><span class="w-1/2 rounded-t-sm" style="height:${(av / max) * 100}%;background:${FF.cy}"></span></div><span class="font-mono text-[8px]" style="color:${need - av >= 5 ? '#FBBF24' : FF.mu}">${d}</span></div>`).join('')}</div>
+    if (s.stage === 0) {
+      const chip = (id, label, color) => {
+        const on = s.platforms.includes(id)
+        return `<span data-plat="${id}" class="flex flex-1 items-center gap-2 rounded-xl p-2.5 transition-colors ${on ? 'bg-select/8 ring-2 ring-select' : 'ring-1 ring-line'}">
+          <span class="grid size-7 place-items-center rounded-lg text-[10px] font-bold text-white" style="background:${color}">${label[0]}</span>
+          <span class="flex-1 text-[12px] font-semibold">${label}</span>
+          <span class="grid size-4 place-items-center rounded-full ${on ? 'bg-select text-white' : 'ring-1 ring-line'}">${on ? CHECK : ''}</span></span>`
+      }
+      body = `<p class="text-[15px] font-semibold">Where do you want to ride?</p>
+        <p class="mt-0.5 text-[11px] text-muted">Pick one or both. You can add more later.</p>
+        <div class="mt-3 flex gap-2">${chip('efood', 'EFOOD', '#E5282C')}${chip('wolt', 'Wolt', '#009DE0')}</div>
+        <p class="mt-3 text-[11px] font-medium">City</p>
+        <span data-city class="mt-1 flex items-center justify-between rounded-lg px-2.5 py-2 text-[12px] ring-1 ${s.city ? 'ring-ink/30' : 'ring-line text-muted'}">${s.city || 'Choose a city'}<span class="text-muted">▾</span></span>
+        <span data-next class="mt-4 block rounded-lg py-2.5 text-center text-[12px] font-semibold ${s.platforms.length && s.city ? 'bg-ink text-white' : 'bg-paper text-muted'}">Continue</span>`
+    } else if (s.stage === 1) {
+      const all = s.docs.every((d) => d === 2)
+      body = `<div class="flex items-center justify-between"><p class="text-[15px] font-semibold">Verify your identity</p>
+          <span class="rounded-full px-2 py-0.5 text-[9px] font-semibold ${all ? 'bg-emerald-500/15 text-emerald-700' : 'bg-amber-400/20 text-amber-700'}">${all ? 'Verified' : 'In review'}</span></div>
+        <p class="mt-0.5 text-[11px] text-muted">Used for ${s.platforms.length > 1 ? 'EFOOD and Wolt' : 'your platform'}. Upload once.</p>
+        <ul class="mt-2 divide-y divide-line/70">${RIDER_DOCS.map(([n, f], k) => {
+          const st = s.docs[k]
+          return `<li class="flex items-center gap-2.5 py-2">
+            ${st === 2 ? `<span class="grid size-5 place-items-center rounded-md bg-emerald-500 text-white">${CHECK}</span>` : st === 1 ? '<span class="size-5 animate-spin rounded-full border-2 border-select/25 border-t-select"></span>' : '<span class="size-5 rounded-md ring-1 ring-line"></span>'}
+            <span class="flex-1 text-[12px]">${n}</span>
+            ${st === 2 ? `<span class="font-mono text-[10px] text-emerald-600">${f}</span>` : st === 1 ? '<span class="font-mono text-[10px] text-muted">Checking…</span>' : `<span data-rdoc="${k}" class="rounded-md px-2 py-1 text-[11px] font-medium text-select ring-1 ring-select/40">Upload</span>`}</li>`
+        }).join('')}</ul>
+        <span data-next class="mt-3 block rounded-lg py-2.5 text-center text-[12px] font-semibold ${all ? 'bg-ink text-white' : 'bg-paper text-muted'}">Continue</span>`
+    } else if (s.stage === 2) {
+      body = `<p class="text-[15px] font-semibold">Your gear and first shift</p>
+        <div class="mt-3 grid grid-cols-3 gap-2 text-center text-[10px]">
+          ${[['Thermal bag', '▣'], ['Helmet', '◒'], ['Phone mount', '▯']].map(([n, i]) => `<div class="rounded-lg bg-paper/70 px-1 py-2.5"><span class="block text-[18px] leading-none">${i}</span><span class="mt-1.5 block font-medium">${n}</span></div>`).join('')}
         </div>
-        <p class="mt-2 rounded-md px-2 py-1.5 text-[10px]" style="background:${FF.cy}12;color:${FF.fg}"><b style="color:${FF.cy}">Recommended:</b> activate 7 more riders for Saturday in South Coast and Athens Center.</p>`
+        <div class="mt-3 rounded-lg p-2.5 ring-1 ring-line"><p class="font-mono text-[9px] text-muted">FIRST SHIFT</p><p class="mt-0.5 text-[12px] font-semibold">Mon 18:00–23:00 · ${s.city || 'Athens'} Centre</p></div>
+        <span data-gear class="mt-3 block rounded-lg py-2.5 text-center text-[12px] font-semibold ${s.gear ? 'bg-emerald-500 text-white' : 'bg-ink text-white'}">${s.gear ? 'Pickup booked · Sat 11:00' : 'Book gear pickup'}</span>`
+    } else {
+      body = `<div class="flex items-baseline justify-between"><p class="text-[15px] font-semibold">This week's pay</p><span class="font-mono text-[10px] text-muted">Paid Friday</span></div>
+        <p class="mt-2 font-display text-[30px] font-bold tracking-tight">€642.80</p>
+        <div class="mt-2 flex h-2 overflow-hidden rounded-full"><span class="bg-[#E5282C]" style="width:64%"></span><span class="bg-[#009DE0]" style="width:36%"></span></div>
+        <ul class="mt-3 space-y-1.5 text-[12px]">
+          <li class="flex justify-between"><span class="flex items-center gap-1.5"><span class="size-2 rounded-full bg-[#E5282C]"></span>EFOOD · 61 deliveries</span><span class="font-mono">€412.30</span></li>
+          <li class="flex justify-between"><span class="flex items-center gap-1.5"><span class="size-2 rounded-full bg-[#009DE0]"></span>Wolt · 34 deliveries</span><span class="font-mono">€230.50</span></li>
+        </ul>`
     }
-    return `<div class="relative mx-auto w-full max-w-[440px] overflow-hidden rounded-xl p-3 shadow-[0_16px_50px_-14px_rgb(10_17_32/0.6)] sm:p-4" style="background:${FF.bg};color:${FF.fg}">
-      <div class="mb-2.5 flex items-center justify-between"><span class="flex items-center gap-1.5 text-[11px] font-semibold"><span class="grid size-4 place-items-center rounded-full" style="box-shadow:inset 0 0 0 1.5px ${FF.cy}"><span class="size-1 rounded-full" style="background:${FF.cy}"></span></span>Fero Ferto · Workforce Console</span><span class="font-mono text-[8px]" style="color:${FF.mu}">DEMO DATA</span></div>
-      ${tabBar}
-      <div class="mt-2.5 min-h-[214px]">${body}</div>
+    return `<div class="relative mx-auto w-full max-w-[380px]">
+      <div class="${CARD} p-4 sm:p-5">
+        <div class="mb-4 flex items-center justify-between"><span class="text-[13px] font-bold tracking-tight">fero<span class="text-select">ferto</span></span><span class="font-mono text-[10px] text-muted">Rider portal</span></div>
+        ${rail}
+        <div class="mt-4">${body}</div>
+      </div>
+      ${s.toast ? `<div class="absolute -bottom-4 left-1/2 flex -translate-x-1/2 items-center gap-1.5 whitespace-nowrap rounded-full bg-ink px-3 py-1.5 text-[11px] text-white shadow-lg"><span class="text-emerald-400">${CHECK}</span>${s.toast}</div>` : ''}
     </div>`
   },
-  async play(c, i) {
-    const s = c.s, co = ['eFOOD', 'Wolt', 'BOX Delivery'][i % 3]
-    await c.sleep(1400)
-    await c.tap('[data-tab="matching"]', () => { s.tab = 'matching' })
-    await c.tap(`[data-co="${co}"]`, () => { s.company = co })
-    await c.tap('[data-match]', () => { s.matched = true })
-    await c.sleep(1600)
-    await c.tap('[data-hire]', () => { s.hired = true })
-    await c.sleep(1200)
-    await c.tap('[data-tab="forecast"]', () => { s.tab = 'forecast' })
-    c.rest(); await c.sleep(3400)
+  async play(c) {
+    const s = c.s
+    await c.tap('[data-plat="efood"]', () => { s.platforms.push('efood') })
+    await c.tap('[data-plat="wolt"]', () => { s.platforms.push('wolt') })
+    await c.tap('[data-city]', () => { s.city = 'Athens' })
+    await c.tap('[data-next]', () => { s.stage = 1 })
+    for (let k = 0; k < 3; k++) {
+      await c.tap(`[data-rdoc="${k}"]`, () => { s.docs[k] = 1 })
+      await c.sleep(550)
+      c.set(() => { s.docs[k] = 2 })
+    }
+    await c.sleep(500)
+    await c.tap('[data-next]', () => { s.stage = 2 })
+    await c.tap('[data-gear]', () => { s.gear = true; s.toast = 'Gear pickup booked' })
+    await c.sleep(1100)
+    c.set(() => { s.toast = ''; s.stage = 4 })
+    c.rest(); await c.sleep(3200)
   },
 }
 
@@ -484,7 +500,7 @@ const mobile = {
 }
 
 /* ───────────────────────────── engine ───────────────────────────── */
-export const DEMOS = { booking, rider: fconsole, onboarding, calendar, system, mobile }
+export const DEMOS = { booking, rider, onboarding, calendar, system, mobile }
 
 // Only one demo plays at a time. Demos on screen take turns, one loop each,
 // so two cards side by side never move at once.

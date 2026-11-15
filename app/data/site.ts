@@ -62,26 +62,26 @@ export const projects: Project[] = [
   },
   {
     slug: 'feroferto',
-    title: 'A workforce console for delivery rider fleets',
+    title: 'One portal from rider sign-up to first payout',
     client: 'FeroFerto',
     year: '2026',
     role: 'UI/UX designer · freelance',
     platform: 'Web · Nuxt',
     status: 'Current client',
-    summary: 'Delivery companies in Athens see their riders, match new ones to shifts with explained scores, and plan for demand peaks.',
+    summary: 'Onboarding, verification, gear and payroll for delivery riders working with EFOOD and Wolt in Greece.',
     mock: 'rider',
     outcome: [
-      { value: '6', label: 'modules in one console' },
-      { value: '30', label: 'demo riders across 16 Athens areas' },
+      { value: '5', label: 'stages, sign-up to payroll' },
+      { value: '2', label: 'delivery platforms in one account' },
     ],
     problem:
-      'Delivery companies like eFOOD, Wolt and BOX need riders in the right area at the right hour, and the rush comes fast. Staffing was decided over the phone, with no shared view of who was free, who was overloaded or where the next gap would be.',
+      'Getting a rider on the road means a platform account, identity checks, gear, shifts and pay. Before FeroFerto each of those lived in a different message thread or spreadsheet, and riders never knew which step they were on.',
     approach: [
-      { title: 'A fleet snapshot first', body: 'The overview answers the morning questions in one screen: how many riders are available, on shift or off, how busy the network is, and how many are on the road each hour.' },
-      { title: 'Matches you can explain', body: 'A company picks its area, rider count and shift. Each suggested rider gets a score with plain reasons: same zone, full shift cover, experience, and warnings when someone is nearly fully booked.' },
-      { title: 'See the gap before the rush', body: 'Forecasting compares riders needed with riders available for the next seven days and turns the biggest gap into one recommended action.' },
+      { title: 'One lifecycle, always visible', body: 'Registration, verification, assignment, live coordination and payroll sit on a single progress rail, so a rider always knows what is done and what comes next.' },
+      { title: 'Pick platforms once', body: 'Riders choose EFOOD, Wolt or both during registration. Documents are collected one time and reused for every platform.' },
+      { title: 'Pay that explains itself', body: 'Each payout is split by platform, so riders can match it to the deliveries they made without asking support.' },
     ],
-    learned: 'A score is only useful with its reasons next to it. Showing why a rider ranks high made people trust the list instead of second-guessing it.',
+    learned: 'Riders open the app between deliveries, standing next to a bike. Every screen has one main action and nothing to read twice.',
   },
   {
     slug: 'ledgerly-onboarding',
@@ -192,7 +192,7 @@ export const skills = {
 
 // From LinkedIn. UI/UX was the core of every role.
 export const experience = [
-  { years: '2026 — now', role: 'UI/UX Designer', org: 'FeroFerto', place: 'Greece · freelance, remote from Doha', note: 'Workforce console and booking products, from flows to production UI.' },
+  { years: '2026 — now', role: 'UI/UX Designer', org: 'FeroFerto', place: 'Greece · freelance, remote from Doha', note: 'Rider portal and booking products, from flows to production UI.' },
   { years: '2025 — 2026', role: 'Frontend Developer & UI/UX Designer', org: 'La Victoire DBD', place: 'Doha, Qatar', note: 'UI/UX for the company’s digital platforms, built to a premium brand.' },
   { years: '2023 — 2025', role: 'Frontend Developer', org: 'Grey Owls Technologies', place: 'Pakistan', note: 'Turned UI/UX designs into user-focused Vue and Nuxt interfaces.' },
   { years: '2020 — 2025', role: 'Product Designer & Web Developer', org: 'Chic and Clicks', place: 'Athens, Greece · remote', note: 'Designed and built a responsive e-commerce site, plus brand and UI visuals.' },
