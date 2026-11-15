@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Mock } from '~/data/site'
-defineProps<{ kind: Mock }>()
+defineProps<{ kind: Mock; trigger?: 'hover' | 'auto' }>()
 </script>
 <template>
-  <MotionDemo :kind="kind" />
+  <MotionDemo :kind="kind" :trigger="trigger" />
 </template>

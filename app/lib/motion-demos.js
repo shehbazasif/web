@@ -511,7 +511,10 @@ export function mountDemo(el) {
   const draw = () => { stage.innerHTML = d.render(s) }
 
   const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches
-  let playing = !reduce, visible = false
+  // Hover mode (grid cards on devices with a mouse): play while the card is hovered or focused.
+  // Elsewhere: autoplay while on screen, taking turns with other demos.
+  const hoverMode = el.dataset.trigger === 'hover' && window.matchMedia && matchMedia('(hover: hover) and (pointer: fine)').matches
+  let playing = hoverMode ? false : !reduce, visible = false
 
   const cur = document.createElement('div')
   cur.setAttribute('aria-hidden', 'true')
@@ -526,10 +529,28 @@ export function mountDemo(el) {
   bar.className = 'mt-6 flex items-center justify-center'
   bar.innerHTML = '<button type="button" class="rounded-full bg-white/90 px-3 py-1 text-[11px] font-medium text-ink ring-1 ring-line hover:ring-ink/40"></button>'
   el.appendChild(bar)
-  const btn = bar.firstChild
-  const shade = () => { cur.style.opacity = !playing ? '0' : TURN.owner === el ? '1' : '.35' }
-  const label = () => { btn.textContent = playing ? 'Pause demo' : 'Play demo'; btn.setAttribute('aria-pressed', String(!playing)); shade() }
-  btn.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); playing = !playing; label() })
+  let btn = bar.firstChild
+  const shade = () => { cur.style.opacity = !playing ? '0' : hoverMode || TURN.owner === el ? '1' : '.35' }
+  const label = () => {
+    if (hoverMode) { btn.textContent = playing ? 'Playing' : 'Hover to play'; btn.style.opacity = playing ? '.6' : '1' }
+    else { btn.textContent = playing ? 'Pause demo' : 'Play demo'; btn.setAttribute('aria-pressed', String(!playing)) }
+    shade()
+  }
+  if (hoverMode) {
+    // The pill is a hint, not a control: hovering the card is the control.
+    const hint = document.createElement('span')
+    hint.className = btn.className + ' transition-opacity'
+    btn.replaceWith(hint); btn = hint
+    const host = el.closest('[data-demo-host]') || el
+    const on = () => { playing = true; label() }
+    const off = () => { playing = false; label() }
+    host.addEventListener('mouseenter', on)
+    host.addEventListener('mouseleave', off)
+    host.addEventListener('focusin', on)
+    host.addEventListener('focusout', (e) => { if (!host.contains(e.relatedTarget)) off() })
+  } else {
+    btn.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); playing = !playing; label() })
+  }
   label()
 
   if ('IntersectionObserver' in window) new IntersectionObserver((en) => { visible = en[0].isIntersecting }, { threshold: 0.35 }).observe(el)
@@ -540,6 +561,7 @@ export function mountDemo(el) {
   const gate = async () => {
     for (;;) {
       if (!(playing && visible && el.isConnected)) { release(); await wait(250); continue }
+      if (hoverMode) { shade(); return }
       if (TURN.owner && TURN.owner !== el) { shade(); await wait(200); continue }
       TURN.owner = el; shade(); return
     }
@@ -582,7 +604,7 @@ export function mountDemo(el) {
   ;(async () => {
     for (let i = 0; ; i++) {
       s = d.initial(); draw(); rest()
-      await sleep(1000)
+      await sleep(hoverMode ? 150 : 1000)
       await d.play(ctx, i)
       // Hand over to the next demo on screen, then reset and wait our turn.
       release(); await wait(900)

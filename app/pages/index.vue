@@ -60,13 +60,13 @@ onMounted(() => heroResize(heroRoot.value))
       <div class="mx-auto max-w-6xl px-4 pb-24 pt-12 sm:px-8">
         <div class="mb-14 flex flex-wrap items-end justify-between gap-4">
           <h2 class="text-[clamp(2.25rem,5vw,3.75rem)]"><span class="display-wide">Selected</span> <span class="display-narrow text-muted">work</span></h2>
-          <p class="max-w-xs text-sm text-muted">Six projects, two of them live client work. Each one plays the key flow on its own.</p>
+          <p class="max-w-xs text-sm text-muted">Six projects, two of them live client work. Hover a project to play its key flow.</p>
         </div>
 
         <ul class="grid gap-x-8 gap-y-16 md:grid-cols-2">
           <li v-for="(p, i) in projects" :key="p.slug" :class="i < 2 ? 'md:col-span-2' : ''">
             <!-- The interactive card can't be one big link, or every click in the demo would navigate. -->
-            <div class="group">
+            <div class="group" data-demo-host>
               <p class="mb-2.5 flex items-center gap-1.5 font-mono text-[11px] text-muted transition-colors group-hover:text-select group-focus-visible:text-select">
                 <svg viewBox="0 0 12 12" class="size-3" aria-hidden="true"><path d="M3 0v12M9 0v12M0 3h12M0 9h12" stroke="currentColor" fill="none" /></svg>
                 {{ p.client }} / {{ p.platform }}
@@ -74,7 +74,7 @@ onMounted(() => heroResize(heroRoot.value))
               </p>
               <SelectionFrame :always="false">
                 <div class="spec-outline flex min-h-[420px] flex-col bg-sheet md:min-h-[460px]"><div class="flex flex-1 ring-1 ring-line transition-colors group-hover:bg-white">
-                  <ProjectMock :kind="p.mock" />
+                  <ProjectMock :kind="p.mock" trigger="hover" />
                 </div></div>
               </SelectionFrame>
               <div class="mt-7 grid gap-3">
